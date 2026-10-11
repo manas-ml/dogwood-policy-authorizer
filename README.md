@@ -10,11 +10,11 @@ minutes") are expressed with Dogwood's `when temporal { … }` clauses.
 Requirements: `git` and a Rust toolchain (`cargo`); network access to GitHub.
 
 ```sh
-./poc/run.sh
+./run.sh
 ```
 
 `run.sh` clones `dogwood-policy/dogwood` at the pinned revision `996d756d` into
-`poc/.dogwood-src` (override with `DOGWOOD_SRC=<existing checkout>` or
+`.dogwood-src` (override with `DOGWOOD_SRC=<existing checkout>` or
 `DOGWOOD_BIN=<dogwood binary>`), builds the CLI with `cargo build -p dogwood-cli`
 (~2 min the first time), then:
 
@@ -25,7 +25,7 @@ Requirements: `git` and a Rust toolchain (`cargo`); network access to GitHub.
 4. runs the Rust demo (`SKIP_RUST_DEMO=1` to skip).
 
 It exits non-zero if anything fails. (I checked this by flipping one expected
-verdict: exit 1. A fresh copy of `poc/` with no build cache also passes.)
+verdict: exit 1. A fresh clone with no build cache also passes.)
 
 ## Layout
 
@@ -64,7 +64,7 @@ Notes on the temporal rules:
 
 ## Results
 
-From `./poc/run.sh` (all match expected):
+From `./run.sh` (all match expected):
 
 | Case | Trace | Event | Time | Decision |
 |---|---|---|---|---|
@@ -103,7 +103,7 @@ FAILED: 1 error(s), 0 warning(s).
 
 ## Rust demo
 
-`cd poc/rust-demo && cargo run`. Pipeline: `ServiceSchema::defaults()` →
+`cd rust-demo && cargo run`. Pipeline: `ServiceSchema::defaults()` →
 `PolicySchema::from_cedarschema_str` → `LoweredPolicySet::from_str` →
 `Validator` → `Authorizer` → `Event::builder`. Schema and policies are
 `include_str!`'d from `../schema` and `../policies`; Rust contains no policy
