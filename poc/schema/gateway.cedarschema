@@ -1,0 +1,24 @@
+namespace Drupe {
+  type LoginInput = { user: String };
+  type ReadInput = { user: String, path: String };
+  type WriteInput = { user: String, path: String };
+  type DeleteInput = { user: String, path: String, sensitivity: String };
+  type ExportInput = { user: String, path: String, sensitivity: String };
+  entity Gateway;
+  entity OAuthUser = { id: String } tags String;
+  action "Login" appliesTo {
+    principal: [OAuthUser], resource: [Gateway], context: { input: LoginInput }
+  };
+  action "Read" appliesTo {
+    principal: [OAuthUser], resource: [Gateway], context: { input: ReadInput }
+  };
+  action "Write" appliesTo {
+    principal: [OAuthUser], resource: [Gateway], context: { input: WriteInput }
+  };
+  action "Delete" appliesTo {
+    principal: [OAuthUser], resource: [Gateway], context: { input: DeleteInput }
+  };
+  action "Export" appliesTo {
+    principal: [OAuthUser], resource: [Gateway], context: { input: ExportInput }
+  };
+}

@@ -1,0 +1,36 @@
+// Supporting rule (not one of the four required policies): the gateway has to
+// accept Login requests, otherwise nobody could ever establish a session.
+@id("login_anyone")
+permit (principal, action == Drupe::Action::"Login", resource);
+
+// 1. Baseline: anyone can Read.
+@id("read_anyone")
+permit (principal, action == Drupe::Action::"Read", resource);
+
+// Baseline for the destructive actions, so that policy 2 has something to
+// override: Delete and Export are otherwise permitted.
+@id("delete_export_baseline")
+permit (principal, action in [Drupe::Action::"Delete", Drupe::Action::"Export"], resource);
+
+// 2. Forbid overrides permit: high-sensitivity Delete/Export is always denied.
+@id("forbid_high_sensitivity")
+forbid (principal, action in [Drupe::Action::"Delete", Drupe::Action::"Export"], resource)
+when { context.input.sensitivity == "high" };
+
+// 3. Temporal: Write only if the same user had a successful Login within 1h.
+@id("write_after_login")
+permit (principal, action == Drupe::Action::"Write", resource)
+when temporal {
+    formerly within 1h Drupe::Action::"Login"::response{ input.user: context.input.user }
+};
+
+// 4. Rate limit: deny Export when the same user already has 2+ Export requests
+// in the last 10 minutes. The window includes the current request, so
+// "2 earlier + this one" is a count of 3.
+@id("forbid_export_burst")
+forbid (principal, action == Drupe::Action::"Export", resource)
+when temporal {
+    (count for (t: Timepoint). where (
+        formerly within 10m (Drupe::Action::"Export"::request{ input.user: context.input.user } && tp(t))
+    )) >= 3
+};

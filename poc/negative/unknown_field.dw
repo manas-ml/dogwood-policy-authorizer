@@ -1,0 +1,5 @@
+// Deliberately broken: Read's context.input has no `clearance` field.
+// `dogwood validate` must reject this.
+@id("broken_unknown_field")
+permit (principal, action == Drupe::Action::"Read", resource)
+when { context.input.clearance == "high" };

@@ -1,0 +1,11 @@
+[package]
+name = "rust-demo"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# Pinned to the same revision run.sh builds the CLI from.
+dogwood-language = { git = "https://github.com/dogwood-policy/dogwood", rev = "996d756de1013b7ae209a14f566a80375a59f2f0" }
+
+[workspace]
